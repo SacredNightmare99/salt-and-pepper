@@ -6,6 +6,14 @@ import 'package:salt_and_pepper/widget/message_buble.dart';
 
 import '../catalog/recipe_catalog.dart';
 
+const double kBorder = 2.5;
+
+const Color bg = Color(0xFFFFF3E6);
+const Color black = Colors.black;
+const Color red = Color(0xFFFF4D2D);
+const Color yellow = Color(0xFFFFC700);
+const Color white = Colors.white;
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -32,13 +40,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _initializeGenUI() {
-    // 1. Create GenUiManager with widget catalog
     _genUiManager = GenUiManager(catalog: RecipeCatalog.catalog);
 
     final apiKey = dotenv.env['GEMINI_API_KEY'];
-    assert(apiKey != null && apiKey.isNotEmpty, 'GEMINI_API_KEY not found');
 
-    // 2. Create ContentGenerator (Gemini)
     _contentGenerator = GoogleGenerativeAiContentGenerator(
       catalog: RecipeCatalog.catalog,
       systemInstruction: RecipeCatalog.systemInstruction,
@@ -46,7 +51,6 @@ class _ChatScreenState extends State<ChatScreen> {
       apiKey: apiKey!,
     );
 
-    // 3. Create GenUiConversation (orchestrator)
     _conversation = GenUiConversation(
       genUiManager: _genUiManager,
       contentGenerator: _contentGenerator,
@@ -54,7 +58,6 @@ class _ChatScreenState extends State<ChatScreen> {
       onSurfaceDeleted: _onSurfaceDeleted,
     );
 
-    // Listen to streamed text responses
     _contentGenerator.textResponseStream.listen((text) {
       if (text.isNotEmpty) {
         setState(() {
@@ -66,7 +69,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    // Listen to errors
     _contentGenerator.errorStream.listen((error) {
       setState(() {
         _isLoading = false;
@@ -118,13 +120,10 @@ class _ChatScreenState extends State<ChatScreen> {
         _ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
       );
       _isLoading = true;
-      // Clear previous surfaces
       _surfaceIds.clear();
     });
 
     _scrollToBottom();
-
-    // Send message to AI
     _conversation.sendRequest(UserMessage.text(text));
   }
 
@@ -141,31 +140,37 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bg,
       appBar: AppBar(
-        title: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('🍳', style: TextStyle(fontSize: 24)),
-            SizedBox(width: 8),
-            Text('AI Recipe Assistant'),
-          ],
+        backgroundColor: bg,
+        elevation: 0,
+        title: const Text(
+          'AI RECIPE ASSISTANT',
+          style: TextStyle(fontWeight: FontWeight.w900),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              setState(() {
-                _messages.clear();
-                _surfaceIds.clear();
-              });
-            },
-            tooltip: 'Clear Chat',
+          Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: white,
+              border: Border.all(color: black, width: kBorder),
+            ),
+            child: const Row(
+              children: [
+                Text(
+                  'SAVE',
+                  style: TextStyle(fontWeight: FontWeight.w900),
+                ),
+                SizedBox(width: 6),
+                Icon(Icons.bookmark, size: 16),
+              ],
+            ),
           ),
         ],
       ),
       body: Column(
         children: [
-          // Chat area
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
@@ -173,10 +178,9 @@ class _ChatScreenState extends State<ChatScreen> {
               itemCount:
                   _messages.length + _surfaceIds.length + (_isLoading ? 1 : 0),
               itemBuilder: (context, index) {
-                // Messages
                 if (index < _messages.length) {
                   final message = _messages[index];
-                  return MessageBubble(
+                  return NeubrutalistBubble(
                     text: message.text,
                     isUser: message.isUser,
                     isError: message.isError,
@@ -184,38 +188,37 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 }
 
-                // Loading indicator
                 if (_isLoading && index == _messages.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 8),
-                          Text(
-                            'Preparing recipe...',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ],
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: yellow,
+                      border: Border.all(color: black, width: kBorder),
+                    ),
+                    child: const Text(
+                      'PREPARING RECIPE...',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
                       ),
                     ),
                   );
                 }
 
-                // GenUI surfaces
                 final surfaceIndex =
                     index - _messages.length - (_isLoading ? 1 : 0);
+
                 if (surfaceIndex >= 0 && surfaceIndex < _surfaceIds.length) {
-                  final surfaceId = _surfaceIds[surfaceIndex];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
+                  return Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: bg,
+                      // border: Border.all(color: black, width: kBorder),
+                    ),
                     child: GenUiSurface(
                       host: _genUiManager,
-                      surfaceId: surfaceId,
+                      surfaceId: _surfaceIds[surfaceIndex],
                     ),
                   );
                 }
@@ -225,93 +228,53 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          // Example prompts
-          if (_messages.isEmpty)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  _SuggestionChip(
-                    text: 'I have chicken, potatoes, and onions',
-                    onTap: () => _sendMessage(
-                      'I have chicken, potatoes, and onions. Can you suggest a dinner recipe?',
-                    ),
-                  ),
-                  _SuggestionChip(
-                    text: 'Quick breakfast',
-                    onTap: () => _sendMessage(
-                      'Give me a quick breakfast recipe I can prepare in 15 minutes',
-                    ),
-                  ),
-                  _SuggestionChip(
-                    text: 'Dessert recipe',
-                    onTap: () => _sendMessage(
-                      'Can you suggest an easy chocolate dessert recipe?',
-                    ),
-                  ),
-                ],
+          // INPUT BAR (design only)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: bg,
+              border: Border(
+                top: BorderSide(color: black, width: kBorder),
               ),
             ),
-
-          // Message input area
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, -2),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      hintText: 'DESCRIBE INGREDIENTS',
+                      hintStyle:
+                          const TextStyle(fontWeight: FontWeight.w800),
+                      filled: true,
+                      fillColor: white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                        borderSide:
+                            BorderSide(color: black, width: kBorder),
+                      ),
+                    ),
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: _sendMessage,
+                    enabled: !_isLoading,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: _isLoading
+                      ? null
+                      : () => _sendMessage(_textController.text),
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: red,
+                      border:
+                          Border.all(color: black, width: kBorder),
+                    ),
+                    child: const Icon(Icons.send, color: white),
+                  ),
                 ),
               ],
-            ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Describe the ingredients you have...',
-                        filled: true,
-                        fillColor: Theme.of(
-                          context,
-                        ).colorScheme.surfaceContainerHighest,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 12,
-                        ),
-                      ),
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: _sendMessage,
-                      enabled: !_isLoading,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  FloatingActionButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () => _sendMessage(_textController.text),
-                    elevation: 0,
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(Icons.send),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
@@ -320,28 +283,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-/// Suggestion chip
-class _SuggestionChip extends StatelessWidget {
-  final String text;
-  final VoidCallback onTap;
-
-  const _SuggestionChip({required this.text, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ActionChip(
-        label: Text(text),
-        onPressed: onTap,
-        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        side: BorderSide.none,
-      ),
-    );
-  }
-}
-
-/// Chat message model
 class _ChatMessage {
   final String text;
   final bool isUser;

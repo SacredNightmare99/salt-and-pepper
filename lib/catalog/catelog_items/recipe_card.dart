@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
+const double kBorder = 2.5;
+
+const Color black = Colors.black;
+const Color red = Color(0xFFFF4D2D);
+const Color yellow = Color(0xFFFFC700);
+const Color green = Color(0xFFB6E3B6);
+const Color white = Colors.white;
+
 /// JSON schema for RecipeCard
-/// AI will generate data according to this schema
 final _recipeCardSchema = S.object(
   description: 'Card displaying summary information of a recipe',
   properties: {
@@ -29,130 +36,121 @@ final recipeCardItem = CatalogItem(
   name: 'RecipeCard',
   dataSchema: _recipeCardSchema,
   widgetBuilder: (itemContext) {
-    final context = itemContext.buildContext;
     final json = itemContext.data as Map<String, Object?>;
     final title = json['title'] as String? ?? 'Recipe';
     final duration = json['duration'] as String? ?? '';
     final difficulty = json['difficulty'] as String? ?? 'Medium';
     final imageDescription = json['imageDescription'] as String? ?? '🍽️';
 
-    // Color based on difficulty level
     Color difficultyColor;
     switch (difficulty) {
       case 'Easy':
-        difficultyColor = Colors.green;
+        difficultyColor = green;
         break;
       case 'Hard':
-        difficultyColor = Colors.red;
+        difficultyColor = red;
         break;
       default:
-        difficultyColor = Colors.orange;
+        difficultyColor = yellow;
     }
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Top section – image area
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  imageDescription,
-                  style: const TextStyle(fontSize: 64),
-                ),
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: white,
+        border: Border.all(color: black, width: kBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // IMAGE BLOCK
+          Container(
+            height: 120,
+            decoration: BoxDecoration(
+              color: yellow,
+              border: Border(
+                bottom: BorderSide(color: black, width: kBorder),
               ),
             ),
+            alignment: Alignment.center,
+            child: Text(
+              imageDescription,
+              style: const TextStyle(fontSize: 64),
+            ),
+          ),
 
-            // Bottom section – details
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+          // CONTENT
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // TITLE
+                Text(
+                  title.toUpperCase(),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // META ROW
+                Row(
+                  children: [
+                    // DURATION
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: white,
+                        border:
+                            Border.all(color: black, width: kBorder),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.timer, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            duration,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
+                    const SizedBox(width: 8),
 
-                  // Duration and difficulty
-                  Row(
-                    children: [
-                      // Duration
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.access_time,
-                              size: 16,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              duration,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
+                    // DIFFICULTY
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: difficultyColor,
+                        border:
+                            Border.all(color: black, width: kBorder),
+                      ),
+                      child: Text(
+                        difficulty.toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
                         ),
                       ),
-                      const SizedBox(width: 8),
-
-                      // Difficulty
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: difficultyColor.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: difficultyColor.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        child: Text(
-                          difficulty,
-                          style: TextStyle(
-                            color: difficultyColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   },

@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
+const double kBorder = 2.5;
+
+const Color bg = Color(0xFFFFF3E6);
+const Color black = Colors.black;
+const Color red = Color(0xFFFF4D2D);
+const Color yellow = Color(0xFFFFC700);
+const Color green = Color(0xFFB6E3B6);
+const Color white = Colors.white;
+
 /// JSON schema for StepCard
 final _stepCardSchema = S.object(
   description: 'Card displaying a recipe step',
@@ -34,7 +43,6 @@ final stepCardItem = CatalogItem(
   },
 );
 
-/// StepCard StatefulWidget (supports completion toggle)
 class _StepCardWidget extends StatefulWidget {
   final int stepNumber;
   final String instruction;
@@ -58,179 +66,122 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Card(
-        elevation: _isCompleted ? 1 : 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: _isCompleted
-              ? BorderSide(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.5),
-                  width: 2,
-                )
-              : BorderSide.none,
-        ),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              _isCompleted = !_isCompleted;
-            });
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Step number / completed icon
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _isCompleted
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.primaryContainer,
-                  ),
-                  child: Center(
-                    child: _isCompleted
-                        ? Icon(
-                            Icons.check,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 24,
-                          )
-                        : Text(
-                            '${widget.stepNumber}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onPrimaryContainer,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: _isCompleted ? green : white,
+        border: Border.all(color: black, width: kBorder),
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isCompleted = !_isCompleted;
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // HEADER ROW
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: _isCompleted ? black : red,
+                      border: Border.all(color: black, width: kBorder),
+                    ),
+                    child: Center(
+                      child: _isCompleted
+                          ? const Icon(Icons.check, color: white, size: 20)
+                          : Text(
+                              '${widget.stepNumber}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: white,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
-                ),
-
-                const SizedBox(width: 16),
-
-                // Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Step title and duration
-                      Row(
+                  const SizedBox(width: 12),
+                  Text(
+                    'STEP ${widget.stepNumber}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  if (widget.duration != null) ...[
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: yellow,
+                        border: Border.all(color: black, width: kBorder),
+                      ),
+                      child: Row(
                         children: [
+                          const Icon(Icons.timer, size: 14),
+                          const SizedBox(width: 4),
                           Text(
-                            'Step ${widget.stepNumber}',
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: _isCompleted
-                                      ? Theme.of(context).colorScheme.outline
-                                      : Theme.of(context).colorScheme.onSurface,
-                                ),
-                          ),
-                          if (widget.duration != null) ...[
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 12,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.outline,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    widget.duration!,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.outline,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            widget.duration!,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11,
                             ),
-                          ],
+                          ),
                         ],
                       ),
+                    ),
+                  ],
+                ],
+              ),
 
-                      const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
-                      // Instruction
-                      Text(
-                        widget.instruction,
-                        style: TextStyle(
-                          fontSize: 14,
-                          height: 1.5,
-                          color: _isCompleted
-                              ? Theme.of(context).colorScheme.outline
-                              : Theme.of(context).colorScheme.onSurface,
-                          decoration: _isCompleted
-                              ? TextDecoration.lineThrough
-                              : null,
+              // INSTRUCTION
+              Text(
+                widget.instruction.toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  height: 1.5,
+                  decoration:
+                      _isCompleted ? TextDecoration.lineThrough : null,
+                ),
+              ),
+
+              // TIP
+              if (widget.tip != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: yellow,
+                    border: Border.all(color: black, width: kBorder),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.lightbulb, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.tip!.toUpperCase(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-
-                      // Tip (if present)
-                      if (widget.tip != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Colors.amber.withValues(alpha: 0.3),
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(
-                                Icons.lightbulb_outline,
-                                size: 18,
-                                color: Colors.amber,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  widget.tip!,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.amber.shade900,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
               ],
-            ),
+            ],
           ),
         ),
       ),
