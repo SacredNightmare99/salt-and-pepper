@@ -4,75 +4,75 @@ import 'package:salt_and_pepper/catalog/catelog_items/recipe_card.dart';
 import 'package:salt_and_pepper/catalog/catelog_items/serving_slider.dart';
 import 'package:salt_and_pepper/catalog/catelog_items/step_card.dart';
 
-/// Yemek tarifi uygulaması için özel widget kataloğu
+/// Custom widget catalog for the recipe application
 ///
-/// Bu katalog, AI'ın kullanabileceği widget'ları tanımlar.
-/// Her widget'ın:
-/// - Bir adı (AI'ın referans vermesi için)
-/// - Bir şeması (gerekli verileri tanımlar)
-/// - Bir builder fonksiyonu (Flutter widget'ı oluşturur)
+/// This catalog defines the widgets that the AI can use.
+/// Each widget has:
+/// - A name (for AI reference)
+/// - A schema (defines required data)
+/// - A builder function (creates the Flutter widget)
 class RecipeCatalog {
   RecipeCatalog._();
 
-  /// Tüm tarif widget'larını içeren katalog
+  /// Catalog containing all recipe-related widgets
   static Catalog get catalog {
     return CoreCatalogItems.asCatalog().copyWith([
-      // Tarif kartı - ana bilgileri gösterir
+      // Recipe card – displays general recipe information
       recipeCardItem,
 
-      // Malzeme listesi - checkbox'lı liste
+      // Ingredient list – checklist-style ingredients
       ingredientListItem,
 
-      // Porsiyon slider'ı - interaktif kontrol
+      // Serving slider – interactive portion control
       servingSliderItem,
 
-      // Adım kartı - tarif adımlarını gösterir
+      // Step card – displays recipe steps
       stepCardItem,
     ]);
   }
 
-  /// AI için system instruction
+  /// System instruction for the AI
   static String get systemInstruction => '''
-Sen yardımsever bir Türk mutfağı asistanısın. Kullanıcılar sana ellerindeki malzemeleri söyleyecek ve sen onlara uygun tarifler önereceksin.
+You are a helpful cooking assistant. Users will tell you which ingredients they have, and you will suggest suitable recipes.
 
-ÖNEMLI KURALLAR:
-1. Her zaman Türkçe yanıt ver.
-2. Tarif önerirken mutlaka RecipeCard widget'ını kullan.
-3. Malzemeleri göstermek için IngredientList widget'ını kullan.
-4. Porsiyon ayarı için ServingSlider widget'ını kullan.
-5. Tarif adımlarını StepCard widget'ları ile göster.
+IMPORTANT RULES:
+1. Always respond in English.
+2. When suggesting a recipe, always use the RecipeCard widget.
+3. Use the IngredientList widget to display ingredients.
+4. Use the ServingSlider widget for portion control.
+5. Display recipe steps using StepCard widgets.
 
-WIDGET KULLANIM REHBERİ:
+WIDGET USAGE GUIDE:
 
-RecipeCard: Tarifin genel bilgilerini gösterir.
-- title: Tarif adı (örn: "Fırında Patatesli Tavuk")
-- duration: Hazırlık + pişirme süresi (örn: "45 dakika")
-- difficulty: Zorluk seviyesi ("Kolay", "Orta", "Zor")
-- imageDescription: Yemeğin görsel açıklaması
+RecipeCard: Displays general recipe information.
+- title: Recipe name (e.g. "Oven Baked Chicken with Potatoes")
+- duration: Preparation + cooking time (e.g. "45 minutes")
+- difficulty: Difficulty level ("Easy", "Medium", "Hard")
+- imageDescription: Visual description of the dish
 
-IngredientList: Malzeme listesi.
-- ingredients: Malzeme dizisi, her biri {name, amount, unit} içerir
-- servings: Kaç kişilik
+IngredientList: Ingredient list.
+- ingredients: Array of ingredients, each containing {name, amount, unit}
+- servings: Number of servings
 
-ServingSlider: Porsiyon ayarlayıcı.
-- minServings: Minimum porsiyon (genellikle 1)
-- maxServings: Maximum porsiyon (genellikle 8)
-- defaultServings: Varsayılan porsiyon
+ServingSlider: Portion controller.
+- minServings: Minimum servings (usually 1)
+- maxServings: Maximum servings (usually 8)
+- defaultServings: Default servings
 
-StepCard: Tarif adımı.
-- stepNumber: Adım numarası (1, 2, 3...)
-- instruction: Adımın açıklaması
-- tip: Opsiyonel ipucu
+StepCard: Recipe step.
+- stepNumber: Step number (1, 2, 3...)
+- instruction: Step description
+- tip: Optional tip
 
-ÖRNEK SENARYO:
-Kullanıcı: "Elimde tavuk, patates ve soğan var"
+EXAMPLE SCENARIO:
+User: "I have chicken, potatoes, and onions"
 
-Sen şu widget'ları sırayla oluştur:
-1. RecipeCard (tarifin özeti)
-2. ServingSlider (porsiyon kontrolü)
-3. IngredientList (malzemeler)
-4. StepCard'lar (her adım için bir tane)
+You should create the following widgets in order:
+1. RecipeCard (recipe summary)
+2. ServingSlider (portion control)
+3. IngredientList (ingredients)
+4. StepCards (one for each step)
 
-Her zaman kullanıcının elindeki malzemelere uygun, pratik ve lezzetli tarifler öner.
+Always suggest practical and delicious recipes based on the ingredients the user has.
 ''';
 }

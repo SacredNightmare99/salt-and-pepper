@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
-/// StepCard için JSON şeması
+/// JSON schema for StepCard
 final _stepCardSchema = S.object(
-  description: 'Tarif adımını gösteren kart',
+  description: 'Card displaying a recipe step',
   properties: {
-    'stepNumber': S.integer(description: 'Adım numarası (1, 2, 3...)'),
-    'instruction': S.string(description: 'Adımın detaylı açıklaması'),
-    'tip': S.string(description: 'Opsiyonel ipucu veya dikkat edilecek nokta'),
-    'duration': S.string(description: 'Bu adımın tahmini süresi'),
+    'stepNumber': S.integer(description: 'Step number (1, 2, 3...)'),
+    'instruction': S.string(description: 'Detailed explanation of the step'),
+    'tip': S.string(description: 'Optional tip or point of attention'),
+    'duration': S.string(description: 'Estimated duration of this step'),
   },
   required: ['stepNumber', 'instruction'],
 );
 
-/// StepCard CatalogItem tanımı
+/// StepCard CatalogItem definition
 final stepCardItem = CatalogItem(
   name: 'StepCard',
   dataSchema: _stepCardSchema,
@@ -34,7 +34,7 @@ final stepCardItem = CatalogItem(
   },
 );
 
-/// StepCard StatefulWidget (tamamlandı işaretleme için)
+/// StepCard StatefulWidget (supports completion toggle)
 class _StepCardWidget extends StatefulWidget {
   final int stepNumber;
   final String instruction;
@@ -65,7 +65,9 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
           borderRadius: BorderRadius.circular(12),
           side: _isCompleted
               ? BorderSide(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.5),
                   width: 2,
                 )
               : BorderSide.none,
@@ -82,7 +84,7 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Adım numarası / Tamamlandı ikonu
+                // Step number / completed icon
                 Container(
                   width: 40,
                   height: 40,
@@ -114,16 +116,16 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
 
                 const SizedBox(width: 16),
 
-                // İçerik
+                // Content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Adım başlığı ve süre
+                      // Step title and duration
                       Row(
                         children: [
                           Text(
-                            'Adım ${widget.stepNumber}',
+                            'Step ${widget.stepNumber}',
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -174,7 +176,7 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
 
                       const SizedBox(height: 8),
 
-                      // Talimat
+                      // Instruction
                       Text(
                         widget.instruction,
                         style: TextStyle(
@@ -189,7 +191,7 @@ class _StepCardWidgetState extends State<_StepCardWidget> {
                         ),
                       ),
 
-                      // İpucu (varsa)
+                      // Tip (if present)
                       if (widget.tip != null) ...[
                         const SizedBox(height: 12),
                         Container(

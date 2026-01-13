@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
-/// ServingSlider için JSON şeması
+/// JSON schema for ServingSlider
 final _servingSliderSchema = S.object(
-  description: 'Porsiyon sayısını ayarlamak için slider',
+  description: 'Slider used to adjust the number of servings',
   properties: {
-    'minServings': S.integer(description: 'Minimum porsiyon sayısı'),
-    'maxServings': S.integer(description: 'Maximum porsiyon sayısı'),
-    'defaultServings': S.integer(description: 'Varsayılan porsiyon sayısı'),
-    'label': S.string(description: 'Slider etiketi'),
+    'minServings': S.integer(description: 'Minimum number of servings'),
+    'maxServings': S.integer(description: 'Maximum number of servings'),
+    'defaultServings': S.integer(description: 'Default number of servings'),
+    'label': S.string(description: 'Slider label'),
   },
   required: ['defaultServings'],
 );
 
-/// ServingSlider CatalogItem tanımı
+/// ServingSlider CatalogItem definition
 final servingSliderItem = CatalogItem(
   name: 'ServingSlider',
   dataSchema: _servingSliderSchema,
@@ -23,7 +23,7 @@ final servingSliderItem = CatalogItem(
     final minServings = (json['minServings'] as num?)?.toInt() ?? 1;
     final maxServings = (json['maxServings'] as num?)?.toInt() ?? 8;
     final defaultServings = (json['defaultServings'] as num?)?.toInt() ?? 4;
-    final label = json['label'] as String? ?? 'Porsiyon';
+    final label = json['label'] as String? ?? 'Servings';
 
     return _ServingSliderWidget(
       minServings: minServings,
@@ -72,7 +72,7 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
       _currentValue = value;
     });
 
-    // DataModel'e bildir (AI bu değişikliği görecek)
+    // Notify DataModel (AI will observe this change)
     widget.dispatchEvent(
       UserActionEvent(
         name: 'servingChanged',
@@ -96,7 +96,7 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Başlık ve değer
+              // Header and value
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -115,7 +115,7 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
                     ],
                   ),
 
-                  // Porsiyon sayısı göstergesi
+                  // Servings indicator
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -140,7 +140,7 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'kişi',
+                          'people',
                           style: TextStyle(
                             fontSize: 14,
                             color: Theme.of(
@@ -181,20 +181,20 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
                 ),
               ),
 
-              // Min-Max göstergesi
+              // Min–max labels
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${widget.minServings} kişi',
+                      '${widget.minServings} people',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
                     Text(
-                      '${widget.maxServings} kişi',
+                      '${widget.maxServings} people',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),

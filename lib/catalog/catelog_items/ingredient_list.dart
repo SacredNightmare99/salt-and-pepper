@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
-/// IngredientList için JSON şeması
+/// JSON schema for IngredientList
 final _ingredientListSchema = S.object(
-  description: 'Tarif malzemelerinin listesi',
+  description: 'List of recipe ingredients',
   properties: {
     'ingredients': S.list(
-      description: 'Malzeme listesi',
+      description: 'Ingredient list',
       items: S.object(
         properties: {
-          'name': S.string(description: 'Malzeme adı (örn: tavuk but)'),
-          'amount': S.string(description: 'Miktar (örn: 500)'),
-          'unit': S.string(description: 'Birim (örn: gram, adet, su bardağı)'),
+          'name': S.string(description: 'Ingredient name (e.g. chicken thigh)'),
+          'amount': S.string(description: 'Amount (e.g. 500)'),
+          'unit': S.string(description: 'Unit (e.g. grams, pieces, cups)'),
         },
         required: ['name', 'amount', 'unit'],
       ),
     ),
-    'servings': S.integer(description: 'Kaç kişilik tarif'),
+    'servings': S.integer(description: 'Number of servings'),
   },
   required: ['ingredients'],
 );
 
-/// IngredientList CatalogItem tanımı
+/// IngredientList CatalogItem definition
 final ingredientListItem = CatalogItem(
   name: 'IngredientList',
   dataSchema: _ingredientListSchema,
@@ -42,70 +42,67 @@ final ingredientListItem = CatalogItem(
     }).toList();
 
     return Container(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
                 children: [
-                  // Başlık
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.shopping_basket,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Malzemeler',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '$servings kişilik',
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSecondaryContainer,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Icon(
+                    Icons.shopping_basket,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
-                  const Divider(height: 24),
-
-                  // Malzeme listesi
-                  ...ingredients.map(
-                    (ingredient) => _IngredientRow(ingredient: ingredient),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Ingredients',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '$servings servings',
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSecondaryContainer,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
+              const Divider(height: 24),
+
+              // Ingredient list
+              ...ingredients.map(
+                (ingredient) => _IngredientRow(ingredient: ingredient),
+              ),
+            ],
           ),
+        ),
+      ),
     );
   },
 );
 
-/// Malzeme modeli
+/// Ingredient model
 class _Ingredient {
   final String name;
   final String amount;
@@ -118,7 +115,7 @@ class _Ingredient {
   });
 }
 
-/// Tek bir malzeme satırı
+/// Single ingredient row
 class _IngredientRow extends StatefulWidget {
   final _Ingredient ingredient;
 
@@ -172,7 +169,7 @@ class _IngredientRowState extends State<_IngredientRow> {
               ),
               const SizedBox(width: 12),
 
-              // Malzeme adı
+              // Ingredient name
               Expanded(
                 child: Text(
                   widget.ingredient.name,
@@ -186,7 +183,7 @@ class _IngredientRowState extends State<_IngredientRow> {
                 ),
               ),
 
-              // Miktar
+              // Amount
               Text(
                 '${widget.ingredient.amount} ${widget.ingredient.unit}',
                 style: TextStyle(
