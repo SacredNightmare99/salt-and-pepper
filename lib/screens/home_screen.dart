@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const _BottomNav(),
           ],
         ),
       ),
@@ -353,77 +352,6 @@ class _SecondaryButton extends StatelessWidget {
           const SizedBox(width: 8),
           Icon(icon),
         ],
-      ),
-    );
-  }
-}
-
-/* ---------------- BOTTOM NAV ---------------- */
-
-class _BottomNav extends StatelessWidget {
-  const _BottomNav();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        height: 88,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(width: 4, color: Color(0xFF1B0F0E))),
-        ),
-        child: Row(
-          children: const [
-            _NavItem(icon: Icons.home, label: 'HOME', active: true),
-            _NavItem(icon: Icons.favorite, label: 'SAVED'),
-            _NavItem(icon: Icons.person, label: 'PROFILE'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool active;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    this.active = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        color: active ? Color(0xFFF4B400).withOpacity(0.3) : null,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (active)
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Color(0xFF1B0F0E),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(icon, color: Color(0xFFF4B400)),
-              )
-            else
-              Icon(icon),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
-            ),
-          ],
-        ),
       ),
     );
   }
