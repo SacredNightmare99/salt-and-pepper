@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
+const double kBorder = 2.5;
+
+const Color black = Colors.black;
+const Color red = Color(0xFFFF4D2D);
+const Color yellow = Color(0xFFFFC700);
+const Color green = Color(0xFFB6E3B6);
+const Color white = Colors.white;
+
 /// JSON schema for IngredientList
 final _ingredientListSchema = S.object(
   description: 'List of recipe ingredients',
@@ -27,7 +35,6 @@ final ingredientListItem = CatalogItem(
   name: 'IngredientList',
   dataSchema: _ingredientListSchema,
   widgetBuilder: (itemContext) {
-    final context = itemContext.buildContext;
     final json = itemContext.data as Map<String, Object?>;
     final ingredientsData = json['ingredients'] as List<Object?>? ?? [];
     final servings = (json['servings'] as num?)?.toInt() ?? 4;
@@ -42,61 +49,64 @@ final ingredientListItem = CatalogItem(
     }).toList();
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: white,
+        border: Border.all(color: black, width: kBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // HEADER
+          Row(
             children: [
-              // Header
-              Row(
-                children: [
-                  Icon(
-                    Icons.shopping_basket,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Ingredients',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '$servings servings',
-                      style: TextStyle(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSecondaryContainer,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: red,
+                  border: Border.all(color: black, width: kBorder),
+                ),
+                child: const Icon(
+                  Icons.shopping_basket,
+                  color: white,
+                  size: 18,
+                ),
               ),
-              const Divider(height: 24),
-
-              // Ingredient list
-              ...ingredients.map(
-                (ingredient) => _IngredientRow(ingredient: ingredient),
+              const SizedBox(width: 10),
+              const Text(
+                'INGREDIENTS',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: yellow,
+                  border: Border.all(color: black, width: kBorder),
+                ),
+                child: Text(
+                  '$servings SERVINGS',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ],
           ),
-        ),
+
+          const SizedBox(height: 12),
+
+          // LIST
+          ...ingredients.map(
+            (ingredient) => _IngredientRow(ingredient: ingredient),
+          ),
+        ],
       ),
     );
   },
@@ -130,72 +140,65 @@ class _IngredientRowState extends State<_IngredientRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _isChecked = !_isChecked;
-          });
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            children: [
-              // Checkbox
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: _isChecked
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.outline,
-                    width: 2,
-                  ),
-                  color: _isChecked
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
-                ),
-                child: _isChecked
-                    ? Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      )
-                    : null,
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _isChecked = !_isChecked;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: _isChecked ? green : white,
+          border: Border.all(color: black, width: kBorder),
+        ),
+        child: Row(
+          children: [
+            // CHECKBOX
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: _isChecked ? black : white,
+                border: Border.all(color: black, width: kBorder),
               ),
-              const SizedBox(width: 12),
+              child: _isChecked
+                  ? const Icon(Icons.check, size: 16, color: white)
+                  : null,
+            ),
+            const SizedBox(width: 12),
 
-              // Ingredient name
-              Expanded(
-                child: Text(
-                  widget.ingredient.name,
-                  style: TextStyle(
-                    fontSize: 15,
-                    decoration: _isChecked ? TextDecoration.lineThrough : null,
-                    color: _isChecked
-                        ? Theme.of(context).colorScheme.outline
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-
-              // Amount
-              Text(
-                '${widget.ingredient.amount} ${widget.ingredient.unit}',
+            // NAME
+            Expanded(
+              child: Text(
+                widget.ingredient.name.toUpperCase(),
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: _isChecked
-                      ? Theme.of(context).colorScheme.outline
-                      : Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w700,
+                  decoration:
+                      _isChecked ? TextDecoration.lineThrough : null,
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // AMOUNT
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: yellow,
+                border: Border.all(color: black, width: kBorder),
+              ),
+              child: Text(
+                '${widget.ingredient.amount} ${widget.ingredient.unit}'
+                    .toUpperCase(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

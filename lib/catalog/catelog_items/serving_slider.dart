@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
+const double kBorder = 2.5;
+
+const Color bg = Color(0xFFFFF3E6);
+const Color black = Colors.black;
+const Color red = Color(0xFFFF4D2D);
+const Color yellow = Color(0xFFFFC700);
+const Color white = Colors.white;
+
 /// JSON schema for ServingSlider
 final _servingSliderSchema = S.object(
   description: 'Slider used to adjust the number of servings',
@@ -23,7 +31,7 @@ final servingSliderItem = CatalogItem(
     final minServings = (json['minServings'] as num?)?.toInt() ?? 1;
     final maxServings = (json['maxServings'] as num?)?.toInt() ?? 8;
     final defaultServings = (json['defaultServings'] as num?)?.toInt() ?? 4;
-    final label = json['label'] as String? ?? 'Servings';
+    final label = json['label'] as String? ?? 'SERVINGS';
 
     return _ServingSliderWidget(
       minServings: minServings,
@@ -36,7 +44,6 @@ final servingSliderItem = CatalogItem(
   },
 );
 
-/// ServingSlider StatefulWidget
 class _ServingSliderWidget extends StatefulWidget {
   final int minServings;
   final int maxServings;
@@ -72,7 +79,6 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
       _currentValue = value;
     });
 
-    // Notify DataModel (AI will observe this change)
     widget.dispatchEvent(
       UserActionEvent(
         name: 'servingChanged',
@@ -87,124 +93,94 @@ class _ServingSliderWidgetState extends State<_ServingSliderWidget> {
     final servings = _currentValue.round();
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: white,
+        border: Border.all(color: black, width: kBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // HEADER
+          Row(
             children: [
-              // Header and value
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.people,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        widget.label,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-
-                  // Servings indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$servings',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'people',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Slider
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  activeTrackColor: Theme.of(context).colorScheme.primary,
-                  inactiveTrackColor: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest,
-                  thumbColor: Theme.of(context).colorScheme.primary,
-                  overlayColor: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.2),
-                  trackHeight: 8,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 14,
-                  ),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: red,
+                  border: Border.all(color: black, width: kBorder),
                 ),
-                child: Slider(
-                  value: _currentValue,
-                  min: widget.minServings.toDouble(),
-                  max: widget.maxServings.toDouble(),
-                  divisions: widget.maxServings - widget.minServings,
-                  onChanged: _onChanged,
+                child: const Icon(Icons.people, color: white, size: 18),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                widget.label.toUpperCase(),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
                 ),
               ),
-
-              // Min–max labels
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${widget.minServings} people',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    Text(
-                      '${widget.maxServings} people',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: yellow,
+                  border: Border.all(color: black, width: kBorder),
+                ),
+                child: Text(
+                  '$servings',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+
+          const SizedBox(height: 16),
+
+          // SLIDER (same logic, flat look)
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: black,
+              inactiveTrackColor: black.withOpacity(0.2),
+              thumbColor: red,
+              overlayColor: Colors.transparent,
+              trackHeight: 6,
+              thumbShape:
+                  const RoundSliderThumbShape(enabledThumbRadius: 10),
+            ),
+            child: Slider(
+              value: _currentValue,
+              min: widget.minServings.toDouble(),
+              max: widget.maxServings.toDouble(),
+              divisions: widget.maxServings - widget.minServings,
+              onChanged: _onChanged,
+            ),
+          ),
+
+          // MIN / MAX
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${widget.minServings}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Text(
+                '${widget.maxServings}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
