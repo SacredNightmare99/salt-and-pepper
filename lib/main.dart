@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:genui/genui.dart';
-import 'package:salt_and_pepper/screens/chat_screen.dart';
+import 'package:salt_and_pepper/screens/home_screen.dart';
+import 'package:salt_and_pepper/screens/login_screen.dart';
+// import 'package:salt_and_pepper/screens/chat_screen.dart';
+import 'package:salt_and_pepper/screens/profile_creation_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +46,7 @@ class RecipeGenUIApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const ChatScreen(),
+      home: const LoginScreen(),
     );
   }
 }
