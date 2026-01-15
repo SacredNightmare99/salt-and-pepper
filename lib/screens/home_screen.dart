@@ -9,11 +9,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const bg = Color(0xFFFFF4E8);
-  static const paper = Colors.white;
   static const charcoal = Color(0xFF1B0F0E);
-  static const primary = Color(0xFFE94A35);
-  static const mustard = Color(0xFFF4B400);
-  static const border = BorderSide(width: 4, color: charcoal);
 
   final TextEditingController _manualController = TextEditingController();
 
@@ -182,7 +178,11 @@ class _ScanCard extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             'SCAN FRIDGE',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: _HomeScreenState.charcoal),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: _HomeScreenState.charcoal,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(

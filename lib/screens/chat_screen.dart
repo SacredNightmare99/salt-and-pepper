@@ -145,7 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: bg,
         elevation: 0,
         title: const Text(
-          'AI RECIPE ASSISTANT',
+          'SALT&PEPPER',
           style: TextStyle(fontWeight: FontWeight.w900),
         ),
         actions: [
@@ -158,10 +158,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: const Row(
               children: [
-                Text(
-                  'SAVE',
-                  style: TextStyle(fontWeight: FontWeight.w900),
-                ),
+                Text('SAVE', style: TextStyle(fontWeight: FontWeight.w900)),
                 SizedBox(width: 6),
                 Icon(Icons.bookmark, size: 16),
               ],
@@ -228,7 +225,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
 
-          // INPUT BAR (design only)
+          // INPUT BAR
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -244,14 +241,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     controller: _textController,
                     decoration: InputDecoration(
                       hintText: 'DESCRIBE INGREDIENTS',
-                      hintStyle:
-                          const TextStyle(fontWeight: FontWeight.w800),
+                      hintStyle: const TextStyle(fontWeight: FontWeight.w800),
                       filled: true,
                       fillColor: white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.zero,
-                        borderSide:
-                            BorderSide(color: black, width: kBorder),
+                        borderSide: BorderSide(color: black, width: kBorder),
                       ),
                     ),
                     textInputAction: TextInputAction.send,
@@ -268,8 +263,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: red,
-                      border:
-                          Border.all(color: black, width: kBorder),
+                      border: Border.all(color: black, width: kBorder),
                     ),
                     child: const Icon(Icons.send, color: white),
                   ),

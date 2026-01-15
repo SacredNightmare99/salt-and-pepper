@@ -76,15 +76,14 @@ final ingredientListItem = CatalogItem(
               const SizedBox(width: 10),
               const Text(
                 'INGREDIENTS',
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: yellow,
                   border: Border.all(color: black, width: kBorder),
@@ -175,16 +174,14 @@ class _IngredientRowState extends State<_IngredientRow> {
                 widget.ingredient.name.toUpperCase(),
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  decoration:
-                      _isChecked ? TextDecoration.lineThrough : null,
+                  decoration: _isChecked ? TextDecoration.lineThrough : null,
                 ),
               ),
             ),
 
             // AMOUNT
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: yellow,
                 border: Border.all(color: black, width: kBorder),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:salt_and_pepper/screens/chat_screen.dart';
 
 class ChefProfileScreen extends StatefulWidget {
   const ChefProfileScreen({super.key});
@@ -13,7 +14,7 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
 
   static const Color bg = Color(0xFFF5F5F5);
   static const Color primary = Color(0xFFE94A35);
-  // static const BorderSide border = BorderSide(color: Colors.black, width: 2);
+  static const Color black = Colors.black;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +27,11 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _BackButton(),
-                  const SizedBox(width: 48),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, size: 28),
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 ],
               ),
             ),
@@ -41,7 +43,6 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // TITLE
                     const Text(
                       'SET UP YOUR',
                       style: TextStyle(
@@ -50,7 +51,7 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
                         height: 1.05,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'CHEF PROFILE',
                       style: TextStyle(
                         fontSize: 40,
@@ -72,7 +73,6 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
 
                     const SizedBox(height: 48),
 
-                    // NAME INPUT
                     const Text(
                       'WHAT SHOULD WE CALL YOU?',
                       style: TextStyle(
@@ -82,11 +82,23 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _NameInput(controller: _nameController),
+
+                    TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        hintText: 'e.g. Chef Ramsey',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide:
+                              const BorderSide(width: 2, color: black),
+                        ),
+                      ),
+                    ),
 
                     const SizedBox(height: 40),
 
-                    // DIET
                     const Text(
                       'DIETARY STYLE',
                       style: TextStyle(
@@ -128,9 +140,34 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
             // CTA
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-              child: _CTAButton(
-                label: 'ENTER THE KITCHEN',
-                onTap: () {},
+              child: SizedBox(
+                width: double.infinity,
+                height: 64,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primary,
+                    elevation: 0,
+                    side: const BorderSide(width: 2, color: black),
+                  ),
+                  icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                  label: const Text(
+                    'ENTER THE KITCHEN',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    // 🔥 DEMO NAVIGATION
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ChatScreen(),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -140,69 +177,7 @@ class _ChefProfileScreenState extends State<ChefProfileScreen> {
   }
 }
 
-/* ---------------- COMPONENTS ---------------- */
-
-class _BackButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.pop(context),
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(width: 2, color: Colors.black),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.arrow_back, size: 28),
-      ),
-    );
-  }
-}
-
-class _NameInput extends StatelessWidget {
-  final TextEditingController controller;
-  const _NameInput({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Focus(
-      child: Builder(
-        builder: (context) {
-          final focused = Focus.of(context).hasFocus;
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            height: 64,
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                width: 2,
-                color: focused ? _ChefProfileScreenState.primary : Colors.black,
-              ),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'e.g. Chef Ramsey',
-                    ),
-                  ),
-                ),
-                const Icon(Icons.edit, color: Colors.black38),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
+/* ---------------- DIET OPTION ---------------- */
 
 class _DietOption extends StatelessWidget {
   final String label;
@@ -218,27 +193,19 @@ class _DietOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          height: 64,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected
-                ? _ChefProfileScreenState.primary
-                : Colors.white,
-            border: Border.all(width: 2, color: Colors.black),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1,
-              color: selected ? Colors.white : Colors.black,
-            ),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor:
+              selected ? _ChefProfileScreenState.primary : Colors.white,
+          side: const BorderSide(width: 2, color: Colors.black),
+        ),
+        onPressed: onTap,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
+            color: selected ? Colors.white : Colors.black,
           ),
         ),
       ),
@@ -246,41 +213,3 @@ class _DietOption extends StatelessWidget {
   }
 }
 
-class _CTAButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _CTAButton({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {},
-      onTap: onTap,
-      child: Container(
-        height: 72,
-        decoration: BoxDecoration(
-          color: _ChefProfileScreenState.primary,
-          border: Border.all(width: 2, color: Colors.black),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text(
-              'ENTER THE KITCHEN',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1,
-              ),
-            ),
-            Icon(Icons.arrow_forward, color: Colors.white, size: 28),
-          ],
-        ),
-      ),
-    );
-  }
-}
